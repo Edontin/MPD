@@ -37,17 +37,10 @@
 static void
 playlist_print_path(BufferedOutputStream &os, const Path path)
 {
-#ifdef _UNICODE
-	/* on Windows, playlists always contain UTF-8, because its
-	   "narrow" charset (i.e. CP_ACP) is incapable of storing all
-	   Unicode paths */
 	try {
 		os.Format("%s\n", path.ToUTF8Throw().c_str());
 	} catch (...) {
 	}
-#else
-	os.Format("%s\n", path.c_str());
-#endif
 }
 
 void
