@@ -25,6 +25,7 @@ dbus = static_library(
   include_directories: inc,
   dependencies: [
     dbus_dep,
+    boost_dep
   ],
 )
 

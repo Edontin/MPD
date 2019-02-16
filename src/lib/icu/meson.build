@@ -18,11 +18,22 @@ if icu_dep.found()
     'Init.cxx',
   ]
 elif not get_option('iconv').disabled()
-  have_iconv = compiler.has_function('iconv')
-  conf.set('HAVE_ICONV', have_iconv)
-  if get_option('iconv').enabled()
-    error('iconv() not available')
+  # Empty dependency.
+  icu_dep = dependency('', required: false)
+  if not compiler.has_function(
+      'iconv',
+      prefix: '#include <iconv.h>'
+    )
+    icu_dep = compiler.find_library('iconv')
+    if not compiler.has_function(
+        'iconv',
+        prefix: '#include <iconv.h>',
+        dependencies: [icu_dep]
+      )
+      error('iconv() not available')
+    endif
   endif
+  conf.set('HAVE_ICONV', true)
 endif
 
 icu = static_library(
@@ -30,8 +41,8 @@ icu = static_library(
   icu_sources,
   include_directories: inc,
   dependencies: [
-    icu_dep,
-  ],
+    icu_dep
+  ]
 )
 
 icu_dep = declare_dependency(
